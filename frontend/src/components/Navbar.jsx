@@ -1,13 +1,11 @@
 // components/Navbar.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import styles from "./Navbar.module.css"; // Changed to module
+import "./Navbar.css"; // Reverted back to regular CSS
 
 export default function Navbar() {
   return (
-    <nav className={styles.navbar}>
-      {" "}
-      {/* Use module class */}
+    <nav className="navbar">
       <h1>🌦️ DryPlan</h1>
       <ul>
         <li>
