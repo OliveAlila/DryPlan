@@ -1,12 +1,14 @@
 /* Dashboard.module.css */
+
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 2rem;
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
   background: linear-gradient(135deg, #f5fbff 0%, #f0e6ff 100%);
   animation: fadeIn 0.8s ease;
+  box-sizing: border-box;
 }
 
 .hero {
