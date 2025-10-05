@@ -1,12 +1,27 @@
-import React from 'react'
-import styles from './BackButton.module.css'
+// frontend/src/components/BackButton/BackButton.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./BackButton.module.css";
 
 const BackButton = () => {
-    return (
-    <div>
-        <button type="button" className={styles.backButton}>Back</button>
-    </div>
-    )
-}
+  const navigate = useNavigate();
 
-export default BackButton
+  const handleBackClick = () => {
+    navigate(-1); // Go back to previous page
+    // Alternatively, you can use: navigate('/'); to always go to dashboard
+  };
+
+  return (
+    <div className={styles.buttonContainer}>
+      <button
+        type="button"
+        className={styles.backButton}
+        onClick={handleBackClick}
+      >
+        ← Back to Dashboard
+      </button>
+    </div>
+  );
+};
+
+export default BackButton;
