@@ -28,5 +28,5 @@ nav ul li {
 }
 
 .navbar a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
