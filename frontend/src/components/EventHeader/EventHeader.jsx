@@ -1,24 +1,44 @@
-import React from 'react'
-import styles from './EventHeader.module.css'
+// frontend/src/components/EventHeader/EventHeader.jsx
+import React from "react";
+import styles from "./EventHeader.module.css";
 
+const EventHeader = ({ event }) => {
+  if (!event) return <div>Loading event...</div>;
 
-/* Component needs to fetch data from our backend, to display whichever event has been clicked */
-const EventHeader = () => {
-return (
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const getRiskBadgeClass = (risk) => {
+    switch (risk) {
+      case "high":
+        return styles.riskHigh;
+      case "medium":
+        return styles.riskMedium;
+      default:
+        return styles.riskLow;
+    }
+  };
+
+  return (
     <div className={styles.header}>
-        <h3>Name: Picnic with my girlies</h3>
-        <h3>Date: 4th October</h3>
-        <h3>Location: Uhuru Park</h3>
+      <h1 className={styles.eventName}>{event.name}</h1>
+      <div className={styles.eventDetails}>
+        <p className={styles.date}>📅 {formatDate(event.date)}</p>
+        <p className={styles.location}>📍 {event.location}</p>
+        <span
+          className={`${styles.riskBadge} ${getRiskBadgeClass(event.risk)}`}
+        >
+          {event.risk.toUpperCase()} RISK
+        </span>
+      </div>
     </div>
-    // this is all data we should fetch from the backend
-)
-}
+  );
+};
 
-export default EventHeader
-
-/*
-8798ea
-5b60a2
-ab9ed6
-7884d0
-*/
+export default EventHeader;
