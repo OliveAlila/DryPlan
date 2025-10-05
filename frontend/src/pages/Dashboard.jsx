@@ -1,5 +1,5 @@
 // frontend/src/pages/Dashboard.jsx
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Dashboard.module.css";
 
 const weatherIcon = (condition) => {
@@ -178,3 +178,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
