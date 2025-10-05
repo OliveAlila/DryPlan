@@ -1,10 +1,11 @@
+/* Dashboard.module.css */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
-  background-color: #f5fbff;
+  background: linear-gradient(135deg, #f5fbff 0%, #f0e6ff 100%);
   animation: fadeIn 0.8s ease;
 }
 
@@ -12,20 +13,20 @@
   text-align: center;
   margin-bottom: 3rem;
   padding: 3rem 2rem;
-  background: linear-gradient(135deg, #0077b6 0%, #005a8c 100%);
+  background: linear-gradient(135deg, #6b5b95 0%, #b7aad6 100%);
   color: white;
   border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 119, 182, 0.2);
+  box-shadow: 0 8px 25px rgba(71, 58, 107, 0.3);
 }
 
 .hero h1 {
-  font-size: 3.5rem;
+  font-size: 3rem;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .hero p {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   opacity: 0.9;
   max-width: 600px;
   margin: 0 auto;
@@ -36,12 +37,13 @@
   background: white;
   border-radius: 15px;
   padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(71, 58, 107, 0.1);
   margin-bottom: 2rem;
+  border: 1px solid #e8e2f5;
 }
 
 .form h3 {
-  color: #0077b6;
+  color: #6b5b95;
   margin-bottom: 1.5rem;
   font-size: 1.4rem;
 }
@@ -53,21 +55,44 @@
   margin-bottom: 1.5rem;
 }
 
-.inputGroup input {
+.inputGroup input,
+.inputGroup select {
   padding: 0.8rem 1rem;
-  border: 2px solid #e0f7fa;
+  border: 2px solid #e8e2f5;
   border-radius: 10px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  background: #faf9ff;
+  color: #333;
+  transition: all 0.2s ease;
 }
 
-.inputGroup input:focus {
+.inputGroup input:focus,
+.inputGroup select:focus {
   outline: none;
-  border-color: #0077b6;
+  border-color: #b7aad6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(183, 170, 214, 0.2);
 }
 
+/* Ensure date input shows calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5); /* adjust for visibility on light background */
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+  display: none;
+}
+
+/* Firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* Buttons */
 .submitBtn {
-  background: #0077b6;
+  background: linear-gradient(135deg, #6b5b95 0%, #8c7ac3 100%);
   color: white;
   border: none;
   padding: 0.8rem 2rem;
@@ -78,21 +103,34 @@
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #005a8c;
+  background: linear-gradient(135deg, #8c7ac3 0%, #6b5b95 100%);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(71, 58, 107, 0.3);
 }
 
 .submitBtn:disabled {
   background: #ccc;
   cursor: not-allowed;
+  transform: none;
+}
+
+.locationSelect {
+  color: #333;
+  cursor: pointer;
+}
+
+.locationSelect option {
+  padding: 0.5rem;
+  background: white;
+  color: #333;
 }
 
 /* Events */
 .eventsSection h2 {
-  color: #1a1a1a;
+  color: #6b5b95;
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
-  border-bottom: 3px solid #e0f7fa;
+  border-bottom: 3px solid #e8e2f5;
   padding-bottom: 0.5rem;
 }
 
@@ -102,20 +140,34 @@
   gap: 1.5rem;
 }
 
+/* Cards */
 .card {
-  background: white;
   border-radius: 15px;
   padding: 1.5rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #e9ecef;
+  box-shadow: 0 4px 15px rgba(71, 58, 107, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   animation: fadeIn 0.5s ease;
+  border: 1px solid transparent;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(71, 58, 107, 0.15);
+}
+
+/* Card color by risk */
+.cardHigh {
+  background: linear-gradient(135deg, #f3e5ff 0%, #e0c3fc 100%);
+  border-left: 4px solid #8c7ac3;
+}
+.cardMedium {
+  background: linear-gradient(135deg, #e0f0ff 0%, #c3ddfc 100%);
+  border-left: 4px solid #5a9bd4;
+}
+.cardLow {
+  background: linear-gradient(135deg, #f9f9f9 0%, #e6f0ff 100%);
+  border-left: 4px solid #b0c4de;
 }
 
 .cardHeader {
@@ -126,7 +178,7 @@
 }
 
 .eventName {
-  color: #1a1a1a;
+  color: #473a6b;
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
@@ -142,39 +194,30 @@
   color: white;
 }
 
-.badgeHigh {
+.riskBadgeHigh {
   background: #dc3545;
 }
-.badgeMedium {
+.riskBadgeMedium {
   background: #ff8c00;
 }
-.badgeLow {
+.riskBadgeLow {
   background: #28a745;
-}
-
-.riskHigh {
-  border-left-color: #dc3545;
-  background: linear-gradient(135deg, #fff 0%, #ffe6e6 100%);
-}
-.riskMedium {
-  border-left-color: #ff8c00;
-  background: linear-gradient(135deg, #fff 0%, #fff4e6 100%);
-}
-.riskLow {
-  border-left-color: #28a745;
-  background: linear-gradient(135deg, #fff 0%, #e8f5e8 100%);
 }
 
 .cardBody p {
   margin: 0.5rem 0;
-  color: #333;
+  color: #555;
   font-size: 0.95rem;
+}
+
+.cardFooter {
+  margin-top: 1rem;
 }
 
 .viewDetailsBtn {
   background: transparent;
-  border: 2px solid #0077b6;
-  color: #0077b6;
+  border: 2px solid #b7aad6;
+  color: #473a6b;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 600;
@@ -184,7 +227,7 @@
 }
 
 .viewDetailsBtn:hover {
-  background: #0077b6;
+  background: #b7aad6;
   color: white;
 }
 
@@ -194,8 +237,19 @@
   padding: 3rem;
   background: white;
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(71, 58, 107, 0.1);
   color: #666;
+  border: 1px solid #f0ebfa;
+}
+
+.errorMessage {
+  background: #ffe6e6;
+  color: #dc3545;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #dc3545;
+  font-size: 0.9rem;
 }
 
 /* Animations */
