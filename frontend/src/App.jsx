@@ -1,3 +1,4 @@
+// frontend/src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -12,7 +13,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/details" element={<EventDetail />} />
+          <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </main>

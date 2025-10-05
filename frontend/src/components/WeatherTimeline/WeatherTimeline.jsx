@@ -1,76 +1,73 @@
-import React from 'react'
-import { IoRainySharp } from "react-icons/io5";
-import styles from './WeatherTimeline.module.css'
+// frontend/src/components/WeatherTimeline/WeatherTimeline.jsx
+import React from "react";
+import styles from "./WeatherTimeline.module.css";
 
-const WeatherTimeline = () => {
-    console.log("Component is rendering!");
+const WeatherTimeline = ({ event }) => {
+  if (!event || !event.weatherData) return <div>Loading weather...</div>;
 
-    return (
-    <div>
-        <h2>How's Our Weather Looking Like?</h2>
-        <table className={styles.weatherForecast}>
-            <thead>
-            <tr className={styles.tableHeader}>
-                <th>0600-0800hrs</th>
-                <th>0800-1000hrs</th>
-                <th>1000-1200hrs</th>
-                <th>1200-1300hrs</th>
-                <th>1300-1500hrs</th>
-                <th>1500-1700hrs</th>
-                <th>1700-1900hrs</th>
-                <th>1900-2100hrs</th>
+  const weatherIcon = (condition) => {
+    const c = condition.toLowerCase();
+    if (c.includes("cloud")) return "☁️";
+    if (c.includes("rain")) return "🌧️";
+    if (c.includes("storm")) return "⛈️";
+    if (c.includes("clear")) return "☀️";
+    return "🌡️";
+  };
+
+  // Create table rows for each weather metric
+  const weatherMetrics = [
+    {
+      label: "Condition",
+      value: event.weatherData.condition,
+      icon: weatherIcon(event.weatherData.condition),
+    },
+    {
+      label: "Temperature",
+      value: `${event.weatherData.temperature?.toFixed(1)}°C`,
+      icon: "🌡️",
+    },
+    {
+      label: "Rain Probability",
+      value: `${event.rainProbability}%`,
+      icon: "☔",
+    },
+    { label: "Humidity", value: `${event.weatherData.humidity}%`, icon: "💧" },
+    {
+      label: "Wind Speed",
+      value: `${event.weatherData.windSpeed} m/s`,
+      icon: "💨",
+    },
+  ];
+
+  return (
+    <div className={styles.timeline}>
+      <h2>Weather Overview</h2>
+
+      <table className={styles.weatherForecast}>
+        <thead>
+          <tr className={styles.tableHeader}>
+            <th>Metric</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {weatherMetrics.map((metric, index) => (
+            <tr key={index}>
+              <td>
+                <div className={styles.metricCell}>
+                  <span className={styles.metricIcon}>{metric.icon}</span>
+                  <span className={styles.metricLabel}>{metric.label}</span>
+                </div>
+              </td>
+              <td>
+                <p className={styles.metricValue}>{metric.value}</p>
+              </td>
             </tr>
-            </thead>
-
-            <tbody>
-            <tr>
-                {/* Each time slot gets its OWN td */}
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-                <td>
-                    <IoRainySharp />
-                    <p>30% chance</p>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
     </div>
-    )
-}
+  );
+};
 
-export default WeatherTimeline
-
-
-
-/*
-8798ea
-5b60a2
-ab9ed6
-7884d0
-*/
+export default WeatherTimeline;

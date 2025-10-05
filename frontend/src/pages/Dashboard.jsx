@@ -1,6 +1,7 @@
 // frontend/src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import styles from "./Dashboard.module.css";
+import { Link } from "react-router-dom";
 
 const weatherIcon = (condition) => {
   const c = condition.toLowerCase();
@@ -240,9 +241,12 @@ const Dashboard = () => {
                   )}
                 </div>
                 <div className={styles.cardFooter}>
-                  <button className={styles.viewDetailsBtn}>
+                  <Link
+                    to={`/events/${event._id}`}
+                    className={styles.viewDetailsBtn}
+                  >
                     View Details →
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
