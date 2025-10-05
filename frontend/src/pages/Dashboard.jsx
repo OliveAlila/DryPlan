@@ -13,6 +13,29 @@ const weatherIcon = (condition) => {
   return "🌡️";
 };
 
+const KENYAN_LOCATIONS = [
+  "Nairobi",
+  "Mombasa",
+  "Kisumu",
+  "Nakuru",
+  "Eldoret",
+  "Thika",
+  "Malindi",
+  "Kitale",
+  "Lamu",
+  "Garissa",
+  "Kiambu",
+  "Naivasha",
+  "Nyeri",
+  "Machakos",
+  "Meru",
+  "Kakamega",
+  "Isiolo",
+  "Nyahururu",
+  "Karatina",
+  "Kitui",
+];
+
 const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,70 +45,111 @@ const Dashboard = () => {
     location: "",
   });
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchEvents();
+    testBackendConnection();
   }, []);
 
   const fetchEvents = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/events");
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       setEvents(data);
-    } catch (err) {
-      console.error("Error fetching events:", err);
+    } catch {
+      setError("Failed to load events. Please check if backend is running.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.date || !formData.location) {
+      setError("Please fill in all fields");
+      return;
+    }
     setCreating(true);
+    setError("");
     try {
       const res = await fetch("http://localhost:5000/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      const responseText = await res.text();
       if (res.ok) {
-        const newEvent = await res.json();
+        const newEvent = JSON.parse(responseText);
         setEvents((prev) => [...prev, newEvent]);
         setFormData({ name: "", date: "", location: "" });
+      } else {
+        try {
+          const errData = JSON.parse(responseText);
+          setError(errData.message || `Server error: ${res.status}`);
+        } catch {
+          setError(`Server error: ${responseText || res.status}`);
+        }
       }
-    } catch (err) {
-      console.error("Error creating event:", err);
+    } catch {
+      setError("Network error. Check if backend is running.");
     } finally {
       setCreating(false);
     }
   };
 
-  const getRiskStyles = (risk) => {
-    switch (risk) {
-      case "high":
-        return { badge: styles.badgeHigh, card: styles.riskHigh };
-      case "medium":
-        return { badge: styles.badgeMedium, card: styles.riskMedium };
-      default:
-        return { badge: styles.badgeLow, card: styles.riskLow };
+  const testBackendConnection = async () => {
+    try {
+      await fetch("http://localhost:5000/");
+    } catch {
+      setError("Backend not running.");
     }
   };
 
-  const formatDate = (dateStr) =>
-    new Date(dateStr).toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
+  const formatDate = (dateStr) => {
+    try {
+      return new Date(dateStr).toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const getRiskBadgeClass = (risk) => {
+    switch (risk) {
+      case "high":
+        return styles.riskBadgeHigh;
+      case "medium":
+        return styles.riskBadgeMedium;
+      default:
+        return styles.riskBadgeLow;
+    }
+  };
+
+  const getCardColorClass = (risk) => {
+    switch (risk) {
+      case "high":
+        return styles.cardHigh;
+      case "medium":
+        return styles.cardMedium;
+      default:
+        return styles.cardLow;
+    }
+  };
 
   if (loading) return <div className={styles.loading}>Loading events...</div>;
 
   return (
     <div className={styles.container}>
-      {/* Hero */}
       <div className={styles.hero}>
         <h1>🌧️ DryPlan</h1>
         <p>
@@ -93,9 +157,11 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Add Event Form */}
       <form onSubmit={handleSubmit} className={styles.form}>
         <h3>➕ Add New Event</h3>
+
+        {error && <div className={styles.errorMessage}>❌ {error}</div>}
+
         <div className={styles.inputGroup}>
           <input
             type="text"
@@ -111,22 +177,29 @@ const Dashboard = () => {
             value={formData.date}
             onChange={handleChange}
             required
+            min={new Date().toISOString().split("T")[0]}
           />
-          <input
-            type="text"
+          <select
             name="location"
-            placeholder="Location"
             value={formData.location}
             onChange={handleChange}
+            className={styles.locationSelect}
             required
-          />
+          >
+            <option value="">Select a location</option>
+            {KENYAN_LOCATIONS.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            ))}
+          </select>
         </div>
+
         <button type="submit" className={styles.submitBtn} disabled={creating}>
           {creating ? "Adding..." : "Add Event"}
         </button>
       </form>
 
-      {/* Events Section */}
       <div className={styles.eventsSection}>
         <h2>Your Events ({events.length})</h2>
         {events.length === 0 ? (
@@ -135,41 +208,44 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className={styles.eventsGrid}>
-            {events.map((event) => {
-              const { badge, card } = getRiskStyles(event.risk);
-              return (
-                <div key={event._id} className={`${styles.card} ${card}`}>
-                  <div className={styles.cardHeader}>
-                    <h3 className={styles.eventName}>{event.event}</h3>
-                    <span className={`${styles.riskBadge} ${badge}`}>
-                      {event.risk.toUpperCase()}
-                    </span>
-                  </div>
-
-                  <div className={styles.cardBody}>
-                    <p className={styles.date}>📅 {formatDate(event.date)}</p>
-                    <p className={styles.location}>📍 {event.location}</p>
-                    {event.temperature && (
-                      <>
-                        <p>
-                          {weatherIcon(event.condition)} Temp:{" "}
-                          {event.temperature.toFixed(1)}°C
-                        </p>
-                        <p>☁️ Condition: {event.condition}</p>
-                        <p>💧 Humidity: {event.humidity}%</p>
-                        <p>💨 Wind: {event.wind_speed} m/s</p>
-                      </>
-                    )}
-                  </div>
-
-                  <div className={styles.cardFooter}>
-                    <button className={styles.viewDetailsBtn}>
-                      View Details →
-                    </button>
-                  </div>
+            {events.map((event) => (
+              <div
+                key={event._id}
+                className={`${styles.card} ${getCardColorClass(event.risk)}`}
+              >
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.eventName}>{event.name}</h3>
+                  <span
+                    className={`${styles.riskBadge} ${getRiskBadgeClass(
+                      event.risk
+                    )}`}
+                  >
+                    {event.risk.toUpperCase()}
+                  </span>
                 </div>
-              );
-            })}
+                <div className={styles.cardBody}>
+                  <p className={styles.date}>📅 {formatDate(event.date)}</p>
+                  <p className={styles.location}>📍 {event.location}</p>
+                  {event.weatherData && (
+                    <>
+                      <p>
+                        {weatherIcon(event.weatherData.condition)} Temp:{" "}
+                        {event.weatherData.temperature?.toFixed(1)}°C
+                      </p>
+                      <p>☔ Rain Probability: {event.rainProbability}%</p>
+                      <p>☁️ Condition: {event.weatherData.condition}</p>
+                      <p>💧 Humidity: {event.weatherData.humidity}%</p>
+                      <p>💨 Wind: {event.weatherData.windSpeed} m/s</p>
+                    </>
+                  )}
+                </div>
+                <div className={styles.cardFooter}>
+                  <button className={styles.viewDetailsBtn}>
+                    View Details →
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -178,4 +254,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
